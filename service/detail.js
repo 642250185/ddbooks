@@ -167,7 +167,7 @@ const getDetail = async() => {
             }
             booklist = booklist.concat(books);
         }
-        console.info('size: %d, booklist: %j', booklist.length, booklist);
+        console.info('size: %d', booklist.length);
         return booklist;
     } catch (e) {
         console.error(e);
@@ -219,5 +219,5 @@ const exportExcel = async() => {
     }
 };
 
-// exportExcel();
+exportExcel();
 exports.exportExcel = exportExcel;

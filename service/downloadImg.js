@@ -44,5 +44,5 @@ const saveAllImages = async() => {
     }
 };
 
-
+saveAllImages();
 exports.saveAllImages = saveAllImages;
