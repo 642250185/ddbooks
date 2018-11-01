@@ -8,7 +8,7 @@ const config = {
 
     exportPath: path.join(__dirname, '..', 'download'),
     imagesPath: path.join(__dirname, '..', 'download/images'),
-    filePath: path.join(__dirname, '..', 'file/ddbook.xlsx'),
+    filePath: path.join(__dirname, '..', 'file/ddBook.xlsx'),
     env: function() {
         global.$config = this;
         return global.$config;

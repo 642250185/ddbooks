@@ -52,9 +52,9 @@ const getAllProduct = async() => {
             } else {
                 faileds.push(isbn);
             }
-            if(number === 115){
-                break;
-            }
+            // if(number === 115){
+            //     break;
+            // }
         }
         return {results, faileds};
     } catch (e) {
