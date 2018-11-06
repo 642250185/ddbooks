@@ -1,4 +1,4 @@
-require('../schema');
+// require('../schema');
 const _ = require('lodash');
 const _path = require('path');
 const fs = require('fs-extra');
@@ -44,6 +44,9 @@ const getData = (item) => {
             const result = [];
             request.get({url: url,encoding: null}, async function (err, response, body) {
                 console.info(`[${num}] : ${isbn} ${url} ${response.statusCode} `);
+                if(_.isEmpty(response.statusCode)){
+                    console.warn(`[${num}] 找不到数据......!`);
+                }
                 if(response.statusCode === 404){
                     console.warn(`[${num}] 404,页面不存在......!`);
                     resolve(0);
@@ -155,7 +158,7 @@ const getCloudData = async (item) =>{
 
 const getDetail = async() => {
     try {
-        const products = await $product.find({}).select('isbn url');
+        const products = JSON.parse(fs.readFileSync(productPath));
         console.info(`书籍总数为: ${products.length}`);
         let index = 0, booklist = [];
         for(let item of products){
@@ -226,5 +229,5 @@ const exportExcel = async() => {
     }
 };
 
-
+// exportExcel();
 exports.exportExcel = exportExcel;

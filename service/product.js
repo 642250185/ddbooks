@@ -1,4 +1,4 @@
-require('../schema');
+// require('../schema');
 const _ = require('lodash');
 const _path = require('path');
 const fs = require('fs-extra');
@@ -38,7 +38,7 @@ const getProduct = async(isbn) => {
         } else {
             console.info(`[${index}] : ${isbn} ${url}`);
         }
-        const _product = await $product.find({isbn: isbn});
+        /*const _product = await $product.find({isbn: isbn});
         if(_.isEmpty(_product)){
             const product = {
                 _id     : new mongoose.Types.ObjectId,
@@ -48,7 +48,7 @@ const getProduct = async(isbn) => {
             await new $product(product).save();
         } else {
             console.warn(`[${index}] : 已入库......`);
-        }
+        }*/
         return url;
     } catch (e) {
         console.error(e);
@@ -101,16 +101,19 @@ const getSurplusIsbns = async (isbn, isbnArray) => {
     }
 };
 
+
 const getAllProduct = async() => {
     try {
         console.info(`ISBN数量 :: `, isbnList.length);
         let number = 0, results = [], faileds = [];
-        const breakOffIsbn = await getBreakOff();
-        if(breakOffIsbn !== ""){
-            await getSurplusIsbns(breakOffIsbn, isbnList);
-        }
+
+        // const breakOffIsbn = await getBreakOff();
+        // if(breakOffIsbn !== ""){
+        //     await getSurplusIsbns(breakOffIsbn, isbnList);
+        // }
+
         for(let isbn of isbnList){
-            await saveBreakOff(isbn);
+            // await saveBreakOff(isbn);
             ++number;
             const url = await getProduct(isbn);
             if(!_.isEmpty(url)){
