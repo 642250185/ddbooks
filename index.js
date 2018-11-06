@@ -18,7 +18,7 @@ const start = async() => {
         await saveAllImages();
         console.info('图片下载完成......');
 
-        console.info('结束')
+        console.info('结束');
     } catch (e) {
         console.error(e);
         return e;

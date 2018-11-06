@@ -7,6 +7,7 @@ const iconv = require('iconv-lite');
 const superagent = require('superagent');
 const xlsx = require('node-xlsx').default;
 const config = require('../config/config');
+const {changeIP} = require('../util/iputil');
 
 const download = config.exportPath;
 const productPath = config.productPath;
@@ -158,6 +159,7 @@ const getDetail = async() => {
         let index = 0, booklist = [];
         for(let item of products){
             ++index;
+            // await changeIP();
             let books = await getData(item);
             if(books === 0){
                 continue;
@@ -208,7 +210,7 @@ const exportExcel = async() => {
             row.push(book.publicDate);
             booksExcel.push(row);
         }
-        const filename = `${download}/ddBooks.xlsx`;
+        const filename = `${download}/2-4W.xlsx`;
         fs.writeFileSync(filename, xlsx.build([
             {name: '当当书籍', data: booksExcel},
         ]));

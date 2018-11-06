@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const request = require('superagent');
 const xlsx = require('node-xlsx').default;
 const config = require('../config/config');
+const {changeIP} = require('../util/iputil');
 
 const domain = config.domain;
 const filePath = config.filePath;
@@ -26,6 +27,7 @@ let index = 0;
 const getProduct = async(isbn) => {
     try {
         ++index;
+        // await changeIP();
         const path = `${domain}/?key=${isbn}&act=input`;
         const result = await request.get(path);
         const $ = cheerio.load(result.text, {decodeEntities: false});
@@ -99,6 +101,7 @@ const getSurplusIsbns = async (isbn, isbnArray) => {
 
 const getAllProduct = async() => {
     try {
+        console.info(`ISBN数量 :: `, isbnList.length);
         let number = 0, results = [], faileds = [];
         const breakOffIsbn = await getBreakOff();
         if(breakOffIsbn !== ""){
@@ -141,5 +144,5 @@ const saveProduct = async() => {
     }
 };
 
-
+// saveProduct();
 exports.saveProduct = saveProduct;
