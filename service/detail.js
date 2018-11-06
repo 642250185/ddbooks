@@ -1,3 +1,4 @@
+require('../schema');
 const _ = require('lodash');
 const _path = require('path');
 const fs = require('fs-extra');
@@ -154,10 +155,14 @@ const getCloudData = async (item) =>{
 
 const getDetail = async() => {
     try {
-        const products = JSON.parse(fs.readFileSync(productPath));
+        const products = await $product.find({}).select('isbn url');
         console.info(`书籍总数为: ${products.length}`);
         let index = 0, booklist = [];
         for(let item of products){
+            if(_.isEmpty(item.url)){
+                console.warn(`${item.isbn} URL不存在......`);
+                continue;
+            }
             ++index;
             // await changeIP();
             let books = await getData(item);
@@ -210,7 +215,7 @@ const exportExcel = async() => {
             row.push(book.publicDate);
             booksExcel.push(row);
         }
-        const filename = `${download}/2-4W.xlsx`;
+        const filename = `${download}/ddBook12-14W.xlsx`;
         fs.writeFileSync(filename, xlsx.build([
             {name: '当当书籍', data: booksExcel},
         ]));

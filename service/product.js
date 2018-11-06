@@ -92,7 +92,9 @@ const getSurplusIsbns = async (isbn, isbnArray) => {
                 result.push(_isbn);
             }
         }
-        isbnList = result;
+        if(!_.isEmpty(result)){
+            isbnList = result;
+        }
     } catch (e) {
         console.error(e);
         return [];

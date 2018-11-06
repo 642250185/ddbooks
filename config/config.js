@@ -5,7 +5,7 @@ const config = {
     mongodb: {
         host: '10.0.10.187',
         port: 27017,
-        dbname: 'ddData'
+        dbname: 'ddData5'
     },
 
     domain: 'http://search.dangdang.com',
@@ -16,7 +16,7 @@ const config = {
 
     exportPath: path.join(__dirname, '..', 'download'),
     imagesPath: path.join(__dirname, '..', 'download/images'),
-    filePath: path.join(__dirname, '..', 'file/2-4W.xlsx'),
+    filePath: path.join(__dirname, '..', 'file/ddBook12-14W.xlsx'),
     env: function() {
         global.$config = this;
         return global.$config;
