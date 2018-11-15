@@ -70,7 +70,7 @@ const _getUrl = function (buffer, isbn, callback) {
     });
 };
 
-
+let number = 0;
 const _getProduct = function(isbn, callback) {
     const main_path = `${mainPath}${searchResultPath}`;
     request.post(main_path)
@@ -86,6 +86,7 @@ const _getProduct = function(isbn, callback) {
             }
         })
         .end(function(err, res){
+            console.error('err: ', err);
             if(_.isEmpty(res)){
                 callback(null, {});
             } else {
@@ -94,8 +95,7 @@ const _getProduct = function(isbn, callback) {
                 if(code === 0){
                     const buffer = Buffer.from(ret, 'base64');
                     _getUrl(buffer, isbn, (err, item) => {
-                        console.info(`${err}  / [${isbn}  ${item}]`);
-                        // urlList.push({isbn, item});
+                        console.info(`[${++number}]  ${err}  / [${isbn}  ${item}]`);
                         callback(null, {isbn, item});
                     });
                 }
@@ -125,11 +125,3 @@ const _foo = function () {
         return result;
     });
 };
-
-
-const _test = function() {
-    const array = _foo();
-    console.info('array: ', array);
-};
-
-// _test();

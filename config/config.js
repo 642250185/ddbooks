@@ -5,7 +5,7 @@ const config = {
     mongodb: {
         host: '10.0.10.187',
         port: 27017,
-        dbname: 'ddData5'
+        dbname: 'ddData'
     },
 
     dd: {
@@ -21,7 +21,7 @@ const config = {
 
         exportPath: path.join(__dirname, '..', 'download'),
         imagesPath: path.join(__dirname, '..', 'download/images'),
-        filePath: path.join(__dirname, '..', 'file/4-6W.xlsx'),
+        filePath: path.join(__dirname, '..', 'file/lp4-6W.xlsx'),
     },
 
     env: function() {
