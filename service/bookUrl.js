@@ -10,7 +10,7 @@ const request = require('superagent');
 const Buffer = require('buffer').Buffer;
 const xlsx = require('node-xlsx').default;
 const config = require('../config/config');
-const {mainPath, filePath, searchResultPath} = config.dd;
+const {mainPath, filePath, breakOffPath, searchResultPath} = config.dd;
 
 let isbnList = [];
 const obj  = xlsx.parse(filePath);
@@ -20,9 +20,47 @@ Object.keys(obj).forEach(function(key) {
     });
 });
 
-const test = async() => {
+const getBookUrl = async() => {
     try {
         let number = 0;
+        // 保存中断ISBN
+        const saveBreakOff = async function(isbn) {
+            const results = [{isbn: isbn}];
+            await fs.ensureDir(_path.join(breakOffPath, '..'));
+            fs.writeFileSync(breakOffPath, JSON.stringify(results, null, 4));
+        };
+        // 获取剩余的ISBN
+        const getSurplusIsbns = async function(isbn, isbnArray) {
+            let start = false, result = [];
+            for(let _isbn of isbnArray){
+                if(_isbn === isbn){
+                    start = true;
+                }
+                if(start){
+                    result.push(_isbn);
+                }
+            }
+            if(!_.isEmpty(result)){
+                isbnList = result;
+            }
+        };
+        // 获取中断ISBN
+        const getBreakOff = async function(){
+            const breakoff = JSON.parse(fs.readFileSync(breakOffPath));
+            const isbn = breakoff[0].isbn;
+            if(isbn !== 0){
+                console.info('filtrate before: ', isbnList.length);
+                // 最后一个值
+                const end = isbnList[isbnList.length - 1];
+                console.info(`now: ${isbn}    |    end: ${end}`);
+                if(isbn == end){
+                    isbnList = [];
+                    console.warn(`所有ISBN已经爬取完`);
+                }
+                await getSurplusIsbns(isbn, isbnList);
+                console.info('filtrate after: ', isbnList.length);
+            }
+        };
         // 解析URL
         const analysisUrl = function(buffer, isbn, callback){
             zlib.unzip(buffer, async (err, doc) =>{
@@ -32,6 +70,7 @@ const test = async() => {
                     const aTag = $('#search_nature_rg').find('li').eq(0).find('a');
                     const url = aTag.attr('href');
                     if(!_.isEmpty(url)){
+                        await saveBreakOff(isbn);
                         console.info(`${++number}   ${isbn}   ${url}`);
                         const product = {
                             _id     : new mongoose.Types.ObjectId,
@@ -75,8 +114,10 @@ const test = async() => {
                     }
                 });
         };
+        // 执行比较
+        await getBreakOff();
         // 并发请求
-        async.mapLimit(isbnList, 10, function(isbn, callback){
+        async.mapLimit(isbnList, 10, async function(isbn, callback){
             fetch(isbn, callback);
         }, function(err, result){
             console.info('result.size: ', result.length, result);
@@ -88,4 +129,4 @@ const test = async() => {
 };
 
 
-test();
+exports.getBookUrl = getBookUrl;

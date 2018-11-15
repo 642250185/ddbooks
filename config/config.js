@@ -12,6 +12,7 @@ const config = {
         domain: 'http://search.dangdang.com',
         mainPath: 'http://bijia-api.huishoubao.com',
         searchResultPath: '/bijia/crawler/get_dangdang_search_result',
+
         productPath: path.join(__dirname, '..', 'data/product.json'),
         failedsPath: path.join(__dirname, '..', 'data/faileds.json'),
         detailsPath: path.join(__dirname, '..', 'data/details.json'),
@@ -21,7 +22,7 @@ const config = {
 
         exportPath: path.join(__dirname, '..', 'download'),
         imagesPath: path.join(__dirname, '..', 'download/images'),
-        filePath: path.join(__dirname, '..', 'file/lp4-6W.xlsx'),
+        filePath: path.join(__dirname, '..', 'file/4-6W.xlsx'),
     },
 
     env: function() {

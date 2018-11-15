@@ -104,13 +104,20 @@ const _getProduct = function(isbn, callback) {
 };
 
 
-async.mapLimit(isbnList, isbnList.length, (isbn, callback) => {
+/*async.mapLimit(isbnList, isbnList.length, (isbn, callback) => {
     _getProduct(isbn, callback);
 }, function (err, result) {
     console.error('error: ', err);
     console.info('size: %d, result: %j ', result.length, result);
     console.info('urlList: ', urlList.length, urlList);
-});
+});*/
+
+
+const arr = [1,2,3,4,5,6];
+
+console.info(arr[arr.length-1]);
+
+
 
 
 const _foo = function () {
