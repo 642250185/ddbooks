@@ -92,6 +92,51 @@ const getProduct = async(isbn) => {
 };
 
 
+const _getProduct = async function(isbn, callback){
+    const main_path = `${mainPath}${searchResultPath}`;
+    let result = await request.post(main_path)
+        .set('Content-Type', 'application/json')
+        .send({
+            "head": {
+                "version": "1.0.0"
+            },
+            "param": {
+                "token" : "d9a57117c592435fa8e3c23f34d397a1",
+                "uid"   : "99",
+                "key"   : `${isbn}`
+            }
+        });
+    result = JSON.parse(result.text);
+    const {code, description, ret} = result.data;
+    let url = "";
+    if(code === 0){
+        const buffer = Buffer.from(ret, 'base64');
+        url = await getUrl(buffer, isbn);
+    } else {
+        console.error(`${code} ${description}`);
+    }
+    callback(null, url);
+};
+
+
+const _getAllProduct = async function(){
+    console.info(`ISBN数量 :: `, isbnList.length);
+    let number = 0, results = [], faileds = [];
+    async.mapLimit(isbnList, 10, async (isbn, callback) => {
+        await _getProduct(isbn, function (err, res) {
+            console.error('err: ', err);
+            console.info('res: ', res);
+            callback(null, res);
+        });
+    }, function(err, result){
+        console.info('size: %d, result: ',result.length, result);
+        result.map((item) => {
+            console.info('item: ', item);
+        });
+    });
+};
+
+
 const getAllProduct = async() => {
     try {
         console.info(`ISBN数量 :: `, isbnList.length);
@@ -170,5 +215,5 @@ const getSurplusIsbns = async (isbn, isbnArray) => {
 };
 
 
-saveProduct();
+_getAllProduct();
 // exports.saveProduct = saveProduct;
