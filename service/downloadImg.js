@@ -4,9 +4,7 @@ const request = require('superagent');
 const sleep = require('js-sleep/js-sleep');
 const config = require('../config/config');
 
-const imagesPath = config.imagesPath;
-const detailsPath = config.detailsPath;
-
+const {imagesPath, detailsPath} = config.dd;
 
 let count = 0;
 const downloadImages = async(channel, isbn, title, src) => {

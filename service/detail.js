@@ -1,4 +1,3 @@
-require('../schema');
 const _ = require('lodash');
 const _path = require('path');
 const fs = require('fs-extra');
@@ -8,11 +7,8 @@ const iconv = require('iconv-lite');
 const superagent = require('superagent');
 const xlsx = require('node-xlsx').default;
 const config = require('../config/config');
-const {changeIP} = require('../util/iputil');
 
-const download = config.exportPath;
-const productPath = config.productPath;
-const detailsPath = config.detailsPath;
+const {exportPath, productPath, detailsPath} = config.dd;
 
 let num = 0;
 const getShopBookInfo = async (productId, shopId) => {
@@ -43,12 +39,16 @@ const getData = (item) => {
         return new Promise(function(resolve, reject){
             const result = [];
             request.get({url: url,encoding: null}, async function (err, response, body) {
-                console.info(`[${num}] : ${isbn} ${url} ${response.statusCode} `);
+                if(err) reject(err);
+                if(!response.hasOwnProperty("statusCode")){
+                    console.warn(`[${num}] 网页加载失败......!`);
+                    resolve(0);
+                }
                 if(response.statusCode === 404){
                     console.warn(`[${num}] 404,页面不存在......!`);
                     resolve(0);
                 }
-                if(err) reject(err);
+                console.info(`[${num}] : ${isbn} ${url} ${response.statusCode} `);
                 let buf = iconv.decode(body, 'gb2312');
                 let $ = cheerio.load(buf);
                 // 分类
@@ -155,7 +155,7 @@ const getCloudData = async (item) =>{
 
 const getDetail = async() => {
     try {
-        const products = await $product.find({}).select('isbn url');
+        const products = await $product.find({status: false}).select('isbn url status');
         console.info(`书籍总数为: ${products.length}`);
         let index = 0, booklist = [];
         for(let item of products){
@@ -164,7 +164,6 @@ const getDetail = async() => {
                 continue;
             }
             ++index;
-            // await changeIP();
             let books = await getData(item);
             if(books === 0){
                 continue;
@@ -172,9 +171,12 @@ const getDetail = async() => {
             if(_.isEmpty(books)){
                 books = await getCloudData(item);
             }
+            // 回置状态
+            const product = await $product.findOne({_id: item._id});
+            product.status = true;
+            await product.save();
             booklist = booklist.concat(books);
         }
-        console.info('size: %d', booklist.length);
         return booklist;
     } catch (e) {
         console.error(e);
@@ -215,7 +217,7 @@ const exportExcel = async() => {
             row.push(book.publicDate);
             booksExcel.push(row);
         }
-        const filename = `${download}/ddBook12-14W.xlsx`;
+        const filename = `${exportPath}/ddResult.xlsx`;
         fs.writeFileSync(filename, xlsx.build([
             {name: '当当书籍', data: booksExcel},
         ]));
@@ -226,5 +228,5 @@ const exportExcel = async() => {
     }
 };
 
-// exportExcel();
+
 exports.exportExcel = exportExcel;

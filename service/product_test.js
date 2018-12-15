@@ -161,7 +161,6 @@ const getAllProduct = async() => {
 const saveProduct = async() => {
     try {
         const results = await getAllProduct();
-        console.info('results: ', results);
         return results;
     } catch (e) {
         console.error(e);

@@ -8,6 +8,10 @@ exports.product = new Schema({
     },
     isbn    : String,
     url     : String,
+    status  : {
+        type: Boolean,
+        default: false
+    },
     createTime: {
         type    : Date,
         default : Date.now,
