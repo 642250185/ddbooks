@@ -22,7 +22,7 @@ const config = {
 
         exportPath: path.join(__dirname, '..', 'download'),
         imagesPath: path.join(__dirname, '..', 'download/images'),
-        filePath: path.join(__dirname, '..', 'file/isbndata.xlsx'),
+        filePath: path.join(__dirname, '..', 'file/1-10W.xlsx'),
     },
 
     env: function() {

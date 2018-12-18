@@ -6,6 +6,16 @@ const config = require('../config/config');
 
 const {imagesPath, detailsPath} = config.dd;
 
+const setBookStatus = async(isbn) => {
+    try {
+        // 下载图片的书籍，更新状态。
+        await $book.update({isbn: isbn}, {$set: {status: true}});
+    } catch (e) {
+        console.error(e);
+        return e;
+    }
+};
+
 let count = 0;
 const downloadImages = async(channel, isbn, title, src) => {
     try {
@@ -26,6 +36,7 @@ const downloadImages = async(channel, isbn, title, src) => {
                 console.info(`[${count}]:[${isbn}]: -> ${fileName}.jpeg Download Success!`);
             });
         }
+        await setBookStatus(isbn);
     } catch (e) {
         console.error(e);
         return e;
@@ -42,9 +53,6 @@ const saveAllImages = async() => {
             ++index;
             const {channel, isbn, title, src} = item;
             await downloadImages(channel, isbn, title, src);
-            // if(index === 15){
-            //     break;
-            // }
         }
     } catch (e) {
         console.error(e);

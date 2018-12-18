@@ -73,6 +73,7 @@ const analysisUrl = async(buffer, isbn) => {
                             url     : url
                         };
                         await new $product(product).save();
+                        console.info(`number:  ${number} isbn: ${isbn} Successlfy`);
                         resolve(url);
                     } else {
                         resolve(-1);
@@ -86,14 +87,34 @@ const analysisUrl = async(buffer, isbn) => {
     }
 };
 
+
+const checkUrl = async(isbn) => {
+    try {
+        let existed = false;
+        const urlItem = await $product.findOne({isbn: isbn});
+        if(urlItem){
+            existed = true;
+        }
+        return existed;
+    } catch (e) {
+        console.error(e);
+        return e;
+    }
+};
+
+
 const getBookUrl = async() => {
     for(const isbn of isbnList){
+        const checkR = await checkUrl(isbn);
+        if(checkR){
+            console.info(`该ISBN: ${isbn} ,已经采集入库。`);
+            continue;
+        }
         const buffer = await getData(isbn);
         if(buffer === -1){
             continue;
         }
-        const url = await analysisUrl(buffer, isbn);
-        console.info('url:', url);
+        await analysisUrl(buffer, isbn);
     }
 };
 

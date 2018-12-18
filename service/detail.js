@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const cheerio = require('cheerio');
 const request = require('request');
 const iconv = require('iconv-lite');
+const mongoose = require('mongoose');
 const superagent = require('superagent');
 const xlsx = require('node-xlsx').default;
 const config = require('../config/config');
@@ -171,13 +172,14 @@ const getDetail = async() => {
             if(_.isEmpty(books)){
                 books = await getCloudData(item);
             }
-            // 回置状态
+            // 标记该URL已经爬取过
             const product = await $product.findOne({_id: item._id});
             product.status = true;
             await product.save();
-            booklist = booklist.concat(books);
+            // 将书籍详情存入book中
+            books[0]._id = new mongoose.Types.ObjectId;
+            await new $book(books[0]).save();
         }
-        return booklist;
     } catch (e) {
         console.error(e);
         return e;
@@ -185,10 +187,9 @@ const getDetail = async() => {
 };
 
 
-const saveDetail = async(books) => {
+const saveDetail = async() => {
     try {
-        await fs.ensureDir(_path.join(detailsPath, '..'));
-        fs.writeFileSync(detailsPath, JSON.stringify(books, null, 4));
+        await getDetail();
     } catch (e) {
         console.error(e);
         return e;
@@ -196,37 +197,4 @@ const saveDetail = async(books) => {
 };
 
 
-const exportExcel = async() => {
-    try {
-        const books = await getDetail();
-        await saveDetail(books);
-        console.info(`${books.length} 条书籍信息`);
-        const booksExcel = [['ISBN', '渠道(0:当当官网、1:当当云阅读)','书籍名称','分类','图片地址','抢购价', '原价', '电子书价', '纸质书价', '出版社', '出版时间']];
-        for(let book of books){
-            const row = [];
-            row.push(book.isbn);
-            row.push(book.channel);
-            row.push(book.title);
-            row.push(book.categroy);
-            row.push(book.src);
-            row.push(book.price);
-            row.push(book.m_price);
-            row.push(book.e_price);
-            row.push(book.paper_price);
-            row.push(book.public);
-            row.push(book.publicDate);
-            booksExcel.push(row);
-        }
-        const filename = `${exportPath}/ddResult.xlsx`;
-        fs.writeFileSync(filename, xlsx.build([
-            {name: '当当书籍', data: booksExcel},
-        ]));
-        console.log(`爬取结束, 成功导出文件: ${filename}`);
-    } catch (e) {
-        console.error(e);
-        return e;
-    }
-};
-
-
-exports.exportExcel = exportExcel;
+exports.saveDetail = saveDetail;

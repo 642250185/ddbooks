@@ -1,15 +1,24 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-exports.product = new Schema({
+exports.book = new Schema({
     _id: {
         type    : Schema.Types.ObjectId,
         default : new mongoose.Types.ObjectId
     },
-    isbn    : String,
-    url     : String,
-    status  : {
-        type: Boolean,  // true 表示该ISBN已经爬取过了。
+    isbn        : String,
+    channel     : Number,
+    title       : String,
+    categroy    : String,
+    src         : String,
+    price       : String,
+    m_price     : String,
+    e_price     : String,
+    paper_price : String,
+    public      : String,
+    publicDate  : String,
+    status      : {
+        type: Boolean,
         default: false
     },
     createTime: {
@@ -25,3 +34,8 @@ exports.product = new Schema({
     versionKey: false,
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
 });
+
+
+
+
+

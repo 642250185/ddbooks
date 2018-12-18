@@ -4,9 +4,12 @@ mongoose.connect(`mongodb://${config.mongodb.host}:${config.mongodb.port}/${conf
 mongoose.Promise = global.Promise;
 global.$mongoose = mongoose;
 
+const {product} = require('../model/product');
+const {book} = require('../model/book');
+
 const syncDB = () => {
-    const {product} = require('../model/product');
     global['$product'] = mongoose.model('product', product, 'product');
+    global['$book'] = mongoose.model('book', book, 'book');
 };
 
 syncDB();
